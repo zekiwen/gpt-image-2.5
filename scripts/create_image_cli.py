@@ -13,14 +13,12 @@ from datetime import datetime
 from pathlib import Path
 
 
-# 支持的模型及其质量档位（gpt-image-2 官方支持 high；2.5 系列新增 xhigh/max）
 MODEL_QUALITY = {
     "gpt-image-2": ["auto", "low", "medium", "high"],
     "gpt-image-2.5-sunburst": ["auto", "low", "medium", "high", "xhigh", "max"],
     "gpt-image-2.5-flare": ["auto", "low", "medium", "high", "xhigh", "max"],
 }
 
-# 单价(美元, 每 1M tokens) — 与 image_api.py 一致
 PRICING = {
     "input_image":  8.00,
     "input_text":   5.00,
@@ -101,8 +99,6 @@ class GPTImageClient:
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
 
-    # ---- HTTP ----
-
     def _http(self, url, method="GET", headers=None, data=None, timeout=None) -> bytes:
         """标准库 HTTP 请求，返回响应体；HTTP 错误时抛出带 API 错误信息的 RuntimeError"""
         req = urllib.request.Request(url, data=data, method=method)
@@ -137,8 +133,6 @@ class GPTImageClient:
         parts.append(f"--{boundary}--\r\n".encode("utf-8"))
         return b"".join(parts), f"multipart/form-data; boundary={boundary}"
 
-    # ---- API ----
-
     def generate(self, payload: dict) -> dict:
         """POST /images/generations（JSON body），返回解析后的 JSON"""
         raw = self._http(self.base_url + "/images/generations", method="POST", headers={
@@ -156,7 +150,6 @@ class GPTImageClient:
         }, data=body)
         return json.loads(raw.decode("utf-8"))
 
-    # ---- 图片 IO ----
 
     @staticmethod
     def load_image_bytes(uri: str) -> tuple:
@@ -238,7 +231,6 @@ def main():
     parser.add_argument("--save", help="保存路径，默认自动生成")
     args = parser.parse_args()
 
-    # 参数校验
     if not args.prompt.strip():
         print("❌ prompt 不能为空", file=sys.stderr)
         sys.exit(1)
@@ -264,7 +256,6 @@ def main():
         sys.exit(1)
     quality = args.quality
 
-    # 环境变量
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         print("❌ 请设置环境变量 OPENAI_API_KEY", file=sys.stderr)
@@ -276,7 +267,6 @@ def main():
     t0 = time.time()
     print(f"⏱ 开始请求: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    # 构建请求参数（与 image_api 一致；output_format/output_compression/background 仅在显式传入时下发）
     payload = {
         "prompt": args.prompt,
         "size": args.size,
@@ -293,7 +283,6 @@ def main():
 
     try:
         if args.image:
-            # 图生图：支持多张图片，multipart 上传
             if len(args.image) > 16:
                 print("⚠️ 最多 16 张参考图，将只取前 16 张", file=sys.stderr)
                 args.image = args.image[:16]
@@ -302,11 +291,9 @@ def main():
             for img_path in args.image:
                 content, ext, mime = GPTImageClient.load_image_bytes(img_path)
                 image_list.append((f"image.{ext}", content, mime))
-            # 官方 API 参考 multipart 文件字段统一为 image[]（单图/多图相同）
             files = [("image[]", fname, content, mime) for fname, content, mime in image_list]
             response = client.edit(payload, files)
         else:
-            # 文生图
             response = client.generate(payload)
 
     except Exception as e:
@@ -320,7 +307,6 @@ def main():
     elapsed = time.time() - t0
     print(f"⏱ 结束请求: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} (耗时 {elapsed:.1f}s)")
 
-    # 费用: 按响应 usage 实算人民币 (中转站没返回 usage 时显示 0.0)；汇率来源见输出标注
     usage = response.get("usage") or {}
     rate, rate_src = ExchangeRate().resolve()
     print(f"💰 本次费用: ¥{calc_cost_cny(usage, rate)}（汇率 {rate}，{rate_src}）")
@@ -332,7 +318,6 @@ def main():
     image_content = f"data:image/{args.format or 'png'};base64,{img['b64_json']}"
 
     save_path = args.save or os.path.join("GPT-Image", auto_filename(args.format or "png"))
-    # 确保保存目录存在（默认 GPT-Image/ 在当前工作目录；画板交付队列在 GPT-Image/sketch_io/）
     save_dir = os.path.dirname(save_path)
     if save_dir and not os.path.exists(save_dir):
         os.makedirs(save_dir, exist_ok=True)

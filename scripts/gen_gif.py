@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 """宫格帧 GIF 生成器：一次生成 sprite sheet → ffmpeg 确定性切帧 → 合成循环 GIF。
 纯标准库 + 本机 ffmpeg（无 pip 依赖）。网格生成复用同目录 create_image_cli.py。
 

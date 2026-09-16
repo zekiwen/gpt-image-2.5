@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# 草稿画板本地接收服务：纯 Python 标准库，零依赖，任意浏览器可用
-#   GET  /         → 画板页面（本目录 sketch_pad.html）
-#   POST /deliver  → {session, prompt, png(base64)} 直写 GPT-Image/sketch_io/<session>/
-#   POST /shutdown → 画板导出成功后自动收摊：服务退出
-# 必须在项目根（GPT-Image 所在目录）启动，落盘目录 = <cwd>/GPT-Image/sketch_io
 import base64
 import json
 import os
@@ -30,7 +24,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         for k, v in {**CORS, "Content-Type": ctype}.items():
             self.send_header(k, v)
-        if code != 204:  # 204 不允许携带 Content-Length
+        if code != 204:
             self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)
@@ -46,10 +40,10 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         payload = self.rfile.read(int(self.headers.get("Content-Length") or 0))
-        if self.path == "/shutdown":  # 画板导出成功后自动收摊：服务退出
+        if self.path == "/shutdown":
             self._send(200, json.dumps({"ok": True}))
             print("[sketch-io] exported → shutdown", flush=True)
-            threading.Timer(0.2, lambda: os._exit(0)).start()  # 留时间把响应送出
+            threading.Timer(0.2, lambda: os._exit(0)).start()
             return
         if self.path == "/deliver":
             try:
@@ -61,7 +55,7 @@ class Handler(BaseHTTPRequestHandler):
                 d = ROOT / "GPT-Image" / "sketch_io" / name
                 d.mkdir(parents=True, exist_ok=True)
                 (d / "sketch.png").write_bytes(base64.b64decode(data["png"]))
-                (d / "prompt.txt").write_text(str(data.get("prompt") or ""), encoding="utf-8")  # 后写：两个文件齐 = 交付完成
+                (d / "prompt.txt").write_text(str(data.get("prompt") or ""), encoding="utf-8")
                 self._send(200, json.dumps({"ok": True, "dir": str(d)}))
                 print(f"[sketch-io] {name} → {d}", flush=True)
             except Exception as e:
@@ -70,7 +64,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         self._send(404, "not found", "text/plain; charset=utf-8")
 
-    def log_message(self, *args):  # 静默逐请求访问日志，只留关键事件
+    def log_message(self, *args):
         pass
 
 
