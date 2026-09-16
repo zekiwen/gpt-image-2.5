@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+
+# 本机运行缓存（汇率，自动生成）
+scripts/.env
+
+# 生成产物
+GPT-Image/
+sketch_io/
