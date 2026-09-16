@@ -129,7 +129,6 @@
   .pen-colors .sw { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); transition: transform .1s; }
   .pen-colors .sw:hover { transform: scale(1.14); }
   .pen-colors .sw[aria-pressed="true"] { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--blue); }
-  .pen-colors .sw.custom { background: conic-gradient(from 0deg, #FF3B30, #FF9500, #FFCC00, #34C759, #30B0C7, #007AFF, #AF52DE, #FF2D55, #FF3B30); }
   .pen-sizes { display: flex; gap: 6px; }
   .pen-sizes .sz {
     flex: 1; height: 34px; display: flex; align-items: center; justify-content: center;
@@ -187,8 +186,6 @@
   .expand-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
   :is(button, .sw, select, input[type="range"]):focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
-
-  .offscreen-color { position: fixed; left: -9999px; top: 0; }
 
   #toast {
     position: fixed; top: 18px; left: 50%; transform: translateX(-50%); z-index: 200;
@@ -331,7 +328,6 @@
           <button class="sw" data-c="#AF52DE" aria-pressed="false" style="background:#AF52DE" title="紫"></button>
           <button class="sw" data-c="#FF2D55" aria-pressed="false" style="background:#FF2D55" title="玫红"></button>
           <button class="sw" data-c="#F2C199" aria-pressed="false" style="background:#F2C199" title="肤色"></button>
-          <button class="sw custom" id="customSw" aria-pressed="false" title="自定义颜色"></button>
         </div>
         <div class="pen-sizes" id="sizes">
           <button class="sz" data-w="4"  aria-pressed="false" title="细"><i style="width:5px;height:5px"></i></button>
@@ -380,7 +376,6 @@
 </div>
 
 <input type="file" id="file" accept="image/*" hidden>
-<input type="color" id="customColor" class="offscreen-color" value="#1C1C1E">
 <div id="toast"></div>
 
 <script>
@@ -401,7 +396,7 @@ const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
 const r16 = v => Math.max(64, Math.min(3840, Math.round(v / 16) * 16));
 
 let tool = 'select', color = '#1C1C1E', bg = '#FFFFFF', ratio = 'free', width = 8;
-let gridOn = true, gridGap = 28, customPicked = null;
+let gridOn = true, gridGap = 28;
 let imgEl = null, drawing = false, inkDirty = false, panning = null;
 let shapeStart = null, shapeCur = null, last = null, lastMid = null;
 let zoom = 1, baseScale = 1, dispScale = 1, prevRatio = 'free', lastEmpty = null;
@@ -737,10 +732,7 @@ function setTool(t) {
   syncToolButtons();
 }
 function syncColorButtons() {
-  document.querySelectorAll('#colors .sw:not(.custom)').forEach(s => s.setAttribute('aria-pressed', String(s.dataset.c === color)));
-  const cs = $('customSw');
-  cs.setAttribute('aria-pressed', String(customPicked !== null && color === customPicked));
-  if (customPicked) cs.style.background = customPicked;
+  document.querySelectorAll('#colors .sw').forEach(s => s.setAttribute('aria-pressed', String(s.dataset.c === color)));
 }
 function setColor(c) {
   color = c;
@@ -748,15 +740,7 @@ function setColor(c) {
   syncColorButtons();
   if (textEdit) textInput.style.color = color;
 }
-document.querySelectorAll('#colors .sw:not(.custom)').forEach(s => s.addEventListener('click', () => setColor(s.dataset.c)));
-$('customSw').addEventListener('click', () => $('customColor').click());
-$('customColor').addEventListener('input', e => {
-  color = e.target.value;
-  customPicked = e.target.value;
-  if (tool === 'eraser') setTool('pen');
-  syncColorButtons();
-  if (textEdit) textInput.style.color = color;
-});
+document.querySelectorAll('#colors .sw').forEach(s => s.addEventListener('click', () => setColor(s.dataset.c)));
 function syncSizeButtons() {
   document.querySelectorAll('#sizes .sz').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.w === width)));
 }
@@ -943,7 +927,7 @@ window.addEventListener('resize', () => {
 
 function resetState() {
   bg = '#FFFFFF'; imgEl = null; inkDirty = false;
-  color = '#1C1C1E'; width = 8; customPicked = null;
+  color = '#1C1C1E'; width = 8;
   tool = 'select';
   ratio = prevRatio = 'free';
   zoom = 1; baseScale = 1;
