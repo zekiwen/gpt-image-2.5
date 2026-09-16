@@ -154,7 +154,7 @@ frames[0].save("<主体名称>.gif", save_all=True, append_images=frames[1:],
 先在项目根启动接收服务再打开画板（服务+画板均随本技能目录携带）：
 
 ```bash
-python <本技能目录绝对路径>/server.py     # 零依赖 Python 接收服务（纯标准库），127.0.0.1:17841，须在项目根运行
+python <本技能目录绝对路径>/scripts/server.py     # 零依赖 Python 接收服务（纯标准库），127.0.0.1:17841，须在项目根运行
 start http://127.0.0.1:17841/            # 任意浏览器打开画板
 ```
 
