@@ -44,7 +44,8 @@ gpt-image-2.5/
 ├── SKILL.md                    # Agent 技能说明（触发条件 + 调用规范）
 ├── README.md
 ├── scripts/
-│   └── create_image_cli.py     # 核心 CLI（纯标准库）
+│   ├── create_image_cli.py     # 核心 CLI（纯标准库）
+│   └── gen_gif.py              # 宫格帧 GIF 生成器（依赖本机 ffmpeg）
 ├── server.py                   # 草稿画板接收服务（纯标准库，127.0.0.1:17841）
 └── sketch_pad.html             # 浏览器画板
 ```
