@@ -49,12 +49,16 @@ class ExchangeRate:
         return cfg
 
     def write_env(self, rate: float, date_str: str):
-        self.env_path.write_text(
-            "# USD→CNY 汇率：每日首次运行自动拉取 open.er-api.com 并更新此文件；\n"
-            "# 拉取失败时回退使用这里的值。要固定汇率请设置环境变量 USD_TO_CNY。\n"
-            f"USD_TO_CNY={rate}\n"
-            f"RATE_UPDATED={date_str}\n",
-            encoding="utf-8")
+        cfg = self.read_env()
+        cfg["USD_TO_CNY"] = str(rate)
+        cfg["RATE_UPDATED"] = date_str
+        managed = ("USD_TO_CNY", "RATE_UPDATED")
+        lines = [
+            "# USD→CNY 汇率：每日首次运行自动拉取 open.er-api.com 并更新此文件；",
+            "# 拉取失败时回退使用这里的值。要固定汇率请设置环境变量 USD_TO_CNY。",
+        ] + [f"{k}={v}" for k, v in cfg.items() if k in managed] \
+          + [f"{k}={v}" for k, v in cfg.items() if k not in managed]
+        self.env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     def fetch(self):
         """拉取实时汇率，失败返回 None（汇率查询失败不应影响出图，静默降级）"""
@@ -89,6 +93,14 @@ class ExchangeRate:
             except ValueError:
                 pass
         return self.fallback, "内置默认"
+
+
+def resolve_api_key(env_path=None):
+    """密钥优先级：scripts/.env 的 OPENAI_API_KEY > 系统环境变量"""
+    key = ExchangeRate(env_path=env_path).read_env().get("OPENAI_API_KEY", "").strip()
+    if key:
+        return key
+    return os.getenv("OPENAI_API_KEY")
 
 
 class GPTImageClient:
@@ -256,9 +268,9 @@ def main():
         sys.exit(1)
     quality = args.quality
 
-    api_key = os.getenv("OPENAI_API_KEY")
+    api_key = resolve_api_key()
     if not api_key:
-        print("❌ 请设置环境变量 OPENAI_API_KEY", file=sys.stderr)
+        print("❌ 未找到 OPENAI_API_KEY：在 scripts/.env 写入 OPENAI_API_KEY=<密钥>，或设置系统环境变量", file=sys.stderr)
         sys.exit(1)
     base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
 

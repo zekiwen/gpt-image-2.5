@@ -52,5 +52,5 @@ gpt-image-2.5/
 
 ## 说明
 
-- 密钥只认环境变量 `OPENAI_API_KEY`，代码不存储、不传输密钥到任何第三方
+- 密钥优先读 `scripts/.env` 的 `OPENAI_API_KEY=`，没有再读系统环境变量；密钥不传输到任何第三方，`.env` 已被 `.gitignore` 排除
 - `scripts/.env` 仅为本机汇率缓存（自动生成），已加入 `.gitignore`
