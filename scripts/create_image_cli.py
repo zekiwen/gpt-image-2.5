@@ -53,10 +53,7 @@ class ExchangeRate:
         cfg["USD_TO_CNY"] = str(rate)
         cfg["RATE_UPDATED"] = date_str
         managed = ("USD_TO_CNY", "RATE_UPDATED")
-        lines = [
-            "# USD→CNY 汇率：每日首次运行自动拉取 open.er-api.com 并更新此文件；",
-            "# 拉取失败时回退使用这里的值。要固定汇率请设置环境变量 USD_TO_CNY。",
-        ] + [f"{k}={v}" for k, v in cfg.items() if k in managed] \
+        lines = [f"{k}={v}" for k, v in cfg.items() if k in managed] \
           + [f"{k}={v}" for k, v in cfg.items() if k not in managed]
         self.env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
