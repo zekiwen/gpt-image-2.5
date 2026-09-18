@@ -1,6 +1,6 @@
 # gpt-image-2.5-skill
 
-基于 OpenAI **GPT Image 2 / 2.5** API 的图片生成 / 编辑技能（Agent Skill），核心是一个**纯标准库、零第三方依赖**的 Python CLI，任意 Python 3.9+ 直接可跑。
+基于 OpenAI **GPT Image 2 / 2.5** API 的图片生成 / 编辑技能（Agent Skill）
 
 ## 功能
 
@@ -10,7 +10,7 @@
   - `gpt-image-2.5-flare` — 速度优先，延迟相比 Images 2.0 最高降低 50%
   - `gpt-image-2` — 均衡可靠
 - **参数齐全**：质量档（medium/xhigh/max）、尺寸、png/jpeg/webp + 压缩率、透明底
-- **费用透明**：按 API 实际 usage 换算人民币输出（汇率每日自动拉取并缓存）
+- **费用透明**：按 API 实际 usage 换算人民币输出（汇率每次自动拉取并缓存）
 - **草稿画板**：自带浏览器画板 + 零依赖接收服务，在图上圈注即可转为生图参考
 - **动图流水线**：链式编辑逐帧生成主体渐变序列，ffmpeg/Pillow 合成 GIF/MP4/WebP
 
@@ -30,8 +30,6 @@ python scripts/create_image_cli.py --prompt "把背景换成雪山" --image ref.
 python scripts/create_image_cli.py --prompt "赛博朋克城市夜景" \
   --model gpt-image-2.5-flare --size 2048x2048 --save city.png
 ```
-
-生成耗时 10~260 秒，属正常现象。
 
 ## 作为 Agent Skill 安装
 
