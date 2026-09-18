@@ -17,7 +17,7 @@
 ## 快速开始
 
 ```bash
-# 设置密钥：系统环境变量，或 scripts/.env（模板见 scripts/.env.example）
+# 设置密钥：scripts/.env（模板见 scripts/.env.example）
 export OPENAI_API_KEY=sk-...
 
 # 文生图（默认 sunburst + medium）
@@ -38,6 +38,16 @@ python scripts/create_image_cli.py --prompt "赛博朋克城市夜景" \
 ```
 安装 gpt-image-2.5 skill：https://github.com/zekiwen/gpt-image-2.5
 ```
+
+密钥写进 `scripts/.env`：把 `scripts/.env.example` 复制一份改名为 `.env`，填上自己的密钥。这个文件已在 `.gitignore` 里，不会被提交到仓库。
+
+```
+OPENAI_API_KEY=sk-你的密钥
+USD_TO_CNY=7.0
+RATE_UPDATED=2026-09-17
+```
+
+此外还接了汇率接口：按 OpenAI 官方的单价算，文字输入、图片输入、图片输出各是多少钱，最后折算成每出一张图的花费，方便看清成本。
 
 ## 目录结构
 
