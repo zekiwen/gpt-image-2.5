@@ -52,5 +52,5 @@ gpt-image-2.5/
 
 ## 说明
 
-- 密钥优先读 `scripts/.env` 的 `OPENAI_API_KEY=`，没有再读系统环境变量；密钥不传输到任何第三方，`.env` 已被 `.gitignore` 排除
+- 密钥优先读 `scripts/.env` 的 `OPENAI_API_KEY=`，没有再读系统环境变量；密钥不传输到任何第三方，`.env` 已被 `.gitignore` 排除。配置格式见 `scripts/.env.example`（复制为 `.env` 改密钥即可，`USD_TO_CNY`/`RATE_UPDATED` 是汇率缓存，运行时自动维护）
 - `scripts/.env` 仅为本机汇率缓存（自动生成），已加入 `.gitignore`
