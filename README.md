@@ -17,7 +17,7 @@
 ## 快速开始
 
 ```bash
-# 设置密钥（环境变量，不落盘）
+# 设置密钥：系统环境变量，或 scripts/.env（模板见 scripts/.env.example）
 export OPENAI_API_KEY=sk-...
 
 # 文生图（默认 sunburst + medium）
@@ -47,10 +47,7 @@ gpt-image-2.5/
     ├── create_image_cli.py     # 核心 CLI（纯标准库）
     ├── gen_gif.py              # 宫格帧 GIF 生成器（依赖本机 ffmpeg）
     ├── server.py               # 草稿画板接收服务（纯标准库，127.0.0.1:17841）
-    └── sketch_pad.html         # 浏览器画板
+    ├── sketch_pad.html         # 浏览器画板
+    └── .env.example            # 配置模板（复制为 .env 填入密钥）
 ```
-
-## 说明
-
-- 密钥优先读 `scripts/.env` 的 `OPENAI_API_KEY=`，没有再读系统环境变量；密钥不传输到任何第三方，`.env` 已被 `.gitignore` 排除。配置格式见 `scripts/.env.example`（复制为 `.env` 改密钥即可，`USD_TO_CNY`/`RATE_UPDATED` 是汇率缓存，运行时自动维护）
 - `scripts/.env` 仅为本机汇率缓存（自动生成），已加入 `.gitignore`
