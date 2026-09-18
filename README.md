@@ -33,7 +33,11 @@ python scripts/create_image_cli.py --prompt "赛博朋克城市夜景" \
 
 ## 作为 Agent Skill 安装
 
-把整个目录复制到你的 Agent 技能目录即可（如 ZCode/Claude Code 的 `.agents/skills/gpt-image-2.5/`），`SKILL.md` 含完整触发说明与调用规范。
+直接把以下内容发给 Agent：
+
+```
+安装 gpt-image-2.5 skill：https://github.com/zekiwen/gpt-image-2.5
+```
 
 ## 目录结构
 
