@@ -50,4 +50,3 @@ gpt-image-2.5/
     ├── sketch_pad.html         # 浏览器画板
     └── .env.example            # 配置模板（复制为 .env 填入密钥）
 ```
-- `scripts/.env` 仅为本机汇率缓存（自动生成），已加入 `.gitignore`
