@@ -9,7 +9,7 @@
   - `gpt-image-2.5-sunburst` — 精准与质量优先，复杂精细编辑首选（CLI 默认）
   - `gpt-image-2.5-flare` — 速度优先，延迟相比 Images 2.0 最高降低 50%
   - `gpt-image-2` — 均衡可靠
-- **参数齐全**：质量档（medium/xhigh/max）、尺寸、png/jpeg/webp + 压缩率、透明底
+- **参数齐全**：质量档（low/medium/high，2.5 另有 xhigh/max）、尺寸、png/jpeg/webp + 压缩率、透明底
 - **费用透明**：按 API 实际 usage 换算人民币输出（汇率每次自动拉取并缓存）
 - **草稿画板**：自带浏览器画板 + 零依赖接收服务，在图上圈注即可转为生图参考
 - **动图流水线**：链式编辑逐帧生成主体渐变序列，ffmpeg/Pillow 合成 GIF/MP4/WebP
